@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Smart Toilet PCR</title>
+
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#f3f6fb;
+    min-height:100vh;
+    padding:30px;
+}
+
+.header{
+    text-align:center;
+    margin-bottom:35px;
+}
+
+.header h1{
+    color:#1f2937;
+    font-size:38px;
+    margin-bottom:8px;
+}
+
+.header p{
+    color:#6b7280;
+    font-size:16px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:25px;
+    max-width:1300px;
+    margin:auto;
+}
+
+.card{
+    border-radius:24px;
+    padding:25px;
+    color:white;
+    min-height:220px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+
+    transition:all .4s ease;
+
+    box-shadow:
+    0 10px 25px rgba(0,0,0,.12);
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+.gender{
+    width:fit-content;
+    margin:8px auto 15px auto;
+    padding:6px 14px;
+
+    border-radius:999px;
+
+    background:rgba(255,255,255,.25);
+    border:1px solid rgba(255,255,255,.35);
+
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.5px;
+
+    backdrop-filter:blur(5px);
+}
+
+.available-card{
+    background:linear-gradient(
+        135deg,
+        #16a34a,
+        #22c55e
+    );
+}
+
+.occupied-card{
+    background:linear-gradient(
+        135deg,
+        #dc2626,
+        #ef4444
+    );
+}
+
+.toilet-name{
+    font-size:24px;
+    font-weight:700;
+}
+
+.icon{
+    font-size:60px;
+    text-align:center;
+}
+
+.status{
+    text-align:center;
+    font-size:34px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+.desc{
+    text-align:center;
+    font-size:15px;
+    opacity:.95;
+    margin-top:8px;
+}
+
+.time{
+    text-align:center;
+    margin-top:15px;
+    font-size:13px;
+    opacity:.9;
+}
+
+.footer{
+    margin-top:30px;
+    text-align:center;
+    color:#6b7280;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>MONITORING TOILET PCR</h1>
+    <p>Realtime Toilet Monitoring System</p>
+</div>
+
+<div class="grid">
+
+    <div class="card available-card">
+        <div class="toilet-name">Toilet 127</div>
+
+        <div class="gender">👨 PRIA</div>
+
+        <div>
+            <div class="icon">🚾</div>
+            <div id="toilet127" class="status">TERSEDIA</div>
+            <div id="desc127" class="desc">
+                Siap digunakan
+            </div>
+        </div>
+
+        <div id="time127" class="time">Belum ada data</div>
+    </div>
+
+    <div class="card available-card">
+        <div class="toilet-name">Toilet 324</div>
+
+        <div class="gender">👨 PRIA</div>
+
+        <div>
+            <div class="icon">🚾</div>
+            <div id="toilet324" class="status">TERSEDIA</div>
+            <div id="desc324" class="desc">
+                Siap digunakan
+            </div>
+        </div>
+
+        <div id="time324" class="time">Belum ada data</div>
+    </div>
+
+    <div class="card available-card">
+        <div class="toilet-name">Toilet Mesjid</div>
+
+        <div class="gender">👩 WANITA</div>
+
+        <div>
+            <div class="icon">🚾</div>
+            <div id="toiletMesjid" class="status">TERSEDIA</div>
+            <div id="descMesjid" class="desc">
+                Siap digunakan
+            </div>
+        </div>
+
+        <div id="timeMesjid" class="time">Belum ada data</div>
+    </div>
+
+    <div class="card available-card">
+        <div class="toilet-name">Toilet Kantin</div>
+
+        <div class="gender">👩 WANITA</div>
+
+        <div>
+            <div class="icon">🚾</div>
+            <div id="toiletKantin" class="status">TERSEDIA</div>
+            <div id="descKantin" class="desc">
+                Siap digunakan
+            </div>
+        </div>
+
+        <div id="timeKantin" class="time">Belum ada data</div>
+    </div>
+
+    <div class="card available-card">
+        <div class="toilet-name">Toilet 273</div>
+
+        <div class="gender">👨 PRIA</div>
+
+        <div>
+            <div class="icon">🚾</div>
+            <div id="toilet273" class="status">TERSEDIA</div>
+            <div id="desc273" class="desc">
+                Siap digunakan
+            </div>
+        </div>
+
+        <div id="time273" class="time">Belum ada data</div>
+    </div>
+
+    <div class="card available-card">
+        <div class="toilet-name">Toilet Kantin</div>
+
+        <div class="gender">👨 PRIA</div>
+
+        <div>
+            <div class="icon">🚾</div>
+            <div id="toilet273" class="status">TERSEDIA</div>
+            <div id="desc273" class="desc">
+                Siap digunakan
+            </div>
+        </div>
+
+        <div id="time273" class="time">Belum ada data</div>
+    </div>
+
+</div>
+
+
+<div class="footer">
+    Politeknik Caltex Riau • Smart Toilet Monitoring
+</div>
+
+<script>
+
+const client =
+mqtt.connect(
+'ws://160.187.144.142:9001'
+);
+
+const topics = [
+
+'pcr/24trkb/kelompok4/toilet/127',
+'pcr/24trkb/kelompok4/toilet/324',
+'pcr/24trkb/kelompok4/toilet/mesjid',
+'pcr/24trkb/kelompok4/toilet/kantin',
+'pcr/24trkb/kelompok4/toilet/273'
+
+];
+
+client.on('connect', ()=>{
+
+    console.log("MQTT Connected");
+
+    topics.forEach(topic=>{
+        client.subscribe(topic);
+    });
+
+});
+
+function updateCard(
+statusId,
+timeId,
+status
+){
+
+    const statusElement =
+    document.getElementById(statusId);
+
+    const card =
+    statusElement.closest('.card');
+
+    const desc =
+    card.querySelector('.desc');
+
+    if(status === "TERISI")
+    {
+        statusElement.innerHTML =
+        "TERISI";
+
+        desc.innerHTML =
+        "Sedang digunakan";
+
+        card.classList.remove(
+        "available-card"
+        );
+
+        card.classList.add(
+        "occupied-card"
+        );
+    }
+    else
+    {
+        statusElement.innerHTML =
+        "TERSEDIA";
+
+        desc.innerHTML =
+        "Siap digunakan";
+
+        card.classList.remove(
+        "occupied-card"
+        );
+
+        card.classList.add(
+        "available-card"
+        );
+    }
+
+    document.getElementById(timeId)
+    .innerHTML =
+    "Update : " +
+    new Date().toLocaleString();
+}
+
+client.on('message',
+(topic,message)=>{
+
+    let data =
+    message.toString();
+
+    switch(topic)
+    {
+        case 'pcr/24trkb/kelompok4/toilet/127':
+            updateCard(
+            'toilet127',
+            'time127',
+            data);
+        break;
+
+        case 'pcr/24trkb/kelompok4/toilet/324':
+            updateCard(
+            'toilet324',
+            'time324',
+            data);
+        break;
+
+        case 'pcr/24trkb/kelompok4/toilet/mesjid':
+            updateCard(
+            'toiletMesjid',
+            'timeMesjid',
+            data);
+        break;
+
+        case 'pcr/24trkb/kelompok4/toilet/kantin':
+            updateCard(
+            'toiletKantin',
+            'timeKantin',
+            data);
+        break;
+
+        case 'pcr/24trkb/kelompok4/toilet/273':
+            updateCard(
+            'toilet273',
+            'time273',
+            data);
+        break;
+    }
+
+});
+
+</script>
+
+</body>
+</html>
+
