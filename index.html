@@ -280,9 +280,9 @@ client.on('connect', ()=>{
 function updateCard(
 statusId,
 timeId,
-status
+status,
+timestamp
 ){
-
     const statusElement =
     document.getElementById(statusId);
 
@@ -325,60 +325,83 @@ status
         );
     }
 
-    document.getElementById(timeId)
-    .innerHTML =
-    "Update : " +
-    new Date().toLocaleString();
+document.getElementById(timeId)
+.innerHTML =
+"Update : " + timestamp;
 }
 
-client.on('message',
-(topic,message)=>{
+client.on('message', (topic, message) => {
 
-    let data =
-    message.toString();
+    let payload;
+
+    try
+    {
+        payload = JSON.parse(
+            message.toString()
+        );
+    }
+    catch(e)
+    {
+        console.log("JSON Error", e);
+        return;
+    }
+
+    const status =
+        payload.status;
+
+    const timestamp =
+        payload.timestamp;
 
     switch(topic)
     {
         case 'pcr/24trkb/kelompok4/toilet/127':
             updateCard(
-            'toilet127',
-            'time127',
-            data);
+                'toilet127',
+                'time127',
+                status,
+                timestamp
+            );
         break;
 
         case 'pcr/24trkb/kelompok4/toilet/324':
             updateCard(
-            'toilet324',
-            'time324',
-            data);
+                'toilet324',
+                'time324',
+                status,
+                timestamp
+            );
         break;
 
         case 'pcr/24trkb/kelompok4/toilet/mesjid':
             updateCard(
-            'toiletMesjid',
-            'timeMesjid',
-            data);
+                'toiletMesjid',
+                'timeMesjid',
+                status,
+                timestamp
+            );
         break;
 
         case 'pcr/24trkb/kelompok4/toilet/kantin':
             updateCard(
-            'toiletKantin',
-            'timeKantin',
-            data);
+                'toiletKantin',
+                'timeKantin',
+                status,
+                timestamp
+            );
         break;
 
         case 'pcr/24trkb/kelompok4/toilet/273':
             updateCard(
-            'toilet273',
-            'time273',
-            data);
+                'toilet273',
+                'time273',
+                status,
+                timestamp
+            );
         break;
     }
 
 });
-
 </script>
 
 </body>
 </html>
-
